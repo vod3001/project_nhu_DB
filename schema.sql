@@ -74,5 +74,5 @@ CREATE TABLE booking (
         (status = 'cancelled')
     ),
     CHECK (DATE(start_datetime) = DATE(end_datetime)),
-	CHECK (end_datetime > start_datetime),
+	CHECK (end_datetime > start_datetime)
 );
