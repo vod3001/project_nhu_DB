@@ -48,6 +48,7 @@ CREATE TABLE booking_series (
 	end_time TIME NOT NULL,
 	series_start_date DATE NOT NULL,
 	series_end_date DATE NOT NULL,
+    CHECK (day_of_week IN ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')),
 	CHECK (series_end_date >= series_start_date),
 	CHECK (end_time > start_time)
 );
@@ -66,5 +67,12 @@ CREATE TABLE booking (
 	cancellation_reason TEXT,
 	requires_approval BOOLEAN NOT NULL DEFAULT FALSE,
 	approval_granted BOOLEAN,
-	CHECK (end_datetime > start_datetime)
+    CHECK (
+        (status = 'pending' AND requires_approval = TRUE AND approval_granted IS NULL) OR
+        (status = 'confirmed' AND (requires_approval = FALSE OR approval_granted = TRUE)) OR
+        (status = 'rejected' AND requires_approval = TRUE AND approval_granted = FALSE) OR
+        (status = 'cancelled')
+    ),
+    CHECK (DATE(start_datetime) = DATE(end_datetime)),
+	CHECK (end_datetime > start_datetime),
 );
