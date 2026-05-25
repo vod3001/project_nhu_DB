@@ -40,7 +40,7 @@ CREATE TABLE room_equipment (
 CREATE TABLE booking_series (
 	series_id SERIAL PRIMARY KEY,
 	room_id INT NOT NULL REFERENCES room(room_id),
-	organization_id INT NOT NULL REFERENCES organization(organization_id),
+	organization_id INT REFERENCES organization(organization_id),
 	created_by INT NOT NULL REFERENCES person(person_id),
 	recurrence_rule TEXT NOT NULL,
 	day_of_week TEXT NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE booking_series (
 CREATE TABLE booking (
 	booking_id SERIAL PRIMARY KEY,
 	room_id INT NOT NULL REFERENCES room(room_id),
-	organization_id INT NOT NULL REFERENCES organization(organization_id),
+	organization_id INT REFERENCES organization(organization_id),
 	created_by INT NOT NULL REFERENCES person(person_id),
 	series_id INT REFERENCES booking_series(series_id),
 	start_datetime TIMESTAMP NOT NULL,
