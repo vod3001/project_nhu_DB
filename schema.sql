@@ -40,7 +40,7 @@ CREATE TABLE room_equipment (
 CREATE TABLE booking_series (
 	series_id SERIAL PRIMARY KEY,
 	room_id INT NOT NULL REFERENCES room(room_id),
-	organization_id INT REFERENCES organization(organization_id),
+	organization_id INT REFERENCES organization(organization_id),									-- Organization ID is nullable because a person should be able to book a room for themselves only
 	created_by INT NOT NULL REFERENCES person(person_id),
 	recurrence_rule TEXT NOT NULL,
 	day_of_week TEXT NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE booking_series (
 CREATE TABLE booking (
 	booking_id SERIAL PRIMARY KEY,
 	room_id INT NOT NULL REFERENCES room(room_id),
-	organization_id INT REFERENCES organization(organization_id),
+	organization_id INT REFERENCES organization(organization_id),									-- Organization ID is nullable because a person should be able to book a room for themselves only
 	created_by INT NOT NULL REFERENCES person(person_id),
 	series_id INT REFERENCES booking_series(series_id),
 	start_datetime TIMESTAMP NOT NULL,
@@ -68,11 +68,15 @@ CREATE TABLE booking (
 	requires_approval BOOLEAN NOT NULL DEFAULT FALSE,
 	approval_granted BOOLEAN,
     CHECK (
-        (status = 'pending' AND requires_approval = TRUE AND approval_granted IS NULL) OR
-        (status = 'confirmed' AND (requires_approval = FALSE OR approval_granted = TRUE)) OR
-        (status = 'rejected' AND requires_approval = TRUE AND approval_granted = FALSE) OR
-        (status = 'cancelled')
+        (status = 'pending'   AND (requires_approval = TRUE AND approval_granted IS NULL)) OR		-- Requires approval AND whether it was granted is not known (pending)
+
+        (status = 'confirmed' AND (requires_approval = FALSE OR approval_granted = TRUE))  OR		-- Doesn't require approval (so status is automatically confirmed) 
+																									-- OR requires approval AND it was granted (so status is confirmed)
+
+        (status = 'rejected'  AND (requires_approval = TRUE AND approval_granted = FALSE)) OR       -- Requires approval AND wasn't granted (rejected)
+
+        (status = 'cancelled')																		-- Cancelled, so no need to check the other flags
     ),
-    CHECK (DATE(start_datetime) = DATE(end_datetime)),
-	CHECK (end_datetime > start_datetime)
+    CHECK (DATE(start_datetime) = DATE(end_datetime)),												-- The booking start time and end time must be in the same day (no overnight session)
+	CHECK (end_datetime > start_datetime)															-- And the booking end time must be after start time
 );
