@@ -6,26 +6,26 @@ title: "Group Assignment: Submission Checklist"
 
 Group members (names and student numbers):
 
--
--
--
--
--
+- Vo Dinh Nhan - 
+- Nguyen Vo Trong Nguyen - 103763778
+- Nguyen Viet Dung - 103778682
+- Tran Hoang Minh -
+- Nguyen Huy -
 
 Tick each box before submitting. The boxes under **Required** must all be ticked. The box under **Optional** concerns evaluation consent and is not required.
 
 ## Required
 
-- [ ] The full report is combined into one PDF file.
+- [x] The full report is combined into one PDF file.
 - [ ] Student names and student numbers are included on the cover of the PDF.
-- [ ] All required sections are included in the PDF (subject analysis, conceptual model, relational schema, design-quality review, rationale).
-- [ ] The conceptual diagram is readable and uses crow's foot notation.
-- [ ] The relational schema in the PDF matches `schema.sql`.
-- [ ] `schema.sql` runs without errors on PostgreSQL.
-- [ ] `seed.sql` loads successfully into the schema and contains realistic example data.
-- [ ] `queries.sql` runs against the populated schema, each query is preceded by a comment naming the application query it answers, and the queries cover the application queries listed in the subject analysis.
-- [ ] The design-quality review includes at least one anomaly or redundancy risk and at least two functional dependencies in `X → Y` form with short explanations.
-- [ ] The privacy/data-minimization paragraph is included.
+- [x] All required sections are included in the PDF (subject analysis, conceptual model, relational schema, design-quality review, rationale).
+- [x] The conceptual diagram is readable and uses crow's foot notation.
+- [x] The relational schema in the PDF matches `schema.sql`.
+- [x] `schema.sql` runs without errors on PostgreSQL.
+- [x] `seed.sql` loads successfully into the schema and contains realistic example data.
+- [x] `queries.sql` runs against the populated schema, each query is preceded by a comment naming the application query it answers, and the queries cover the application queries listed in the subject analysis.
+- [x] The design-quality review includes at least one anomaly or redundancy risk and at least two functional dependencies in `X → Y` form with short explanations.
+- [x] The privacy/data-minimization paragraph is included.
 
 ## Optional
 
