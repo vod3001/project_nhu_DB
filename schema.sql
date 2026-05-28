@@ -1,28 +1,28 @@
 CREATE TABLE building (
-	building_id SERIAL PRIMARY KEY,
+	id SERIAL PRIMARY KEY,
 	name TEXT NOT NULL,
 	address TEXT NOT NULL
 );
 
 CREATE TABLE equipment_type (
-	equipment_id SERIAL PRIMARY KEY,
+	id SERIAL PRIMARY KEY,
 	name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE organization (
-	organization_id SERIAL PRIMARY KEY,
+	id SERIAL PRIMARY KEY,
 	name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE person (
-	person_id SERIAL PRIMARY KEY,
+	id SERIAL PRIMARY KEY,
 	name TEXT NOT NULL,
 	email TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE room (
-	room_id SERIAL PRIMARY KEY,
-	building_id INT NOT NULL REFERENCES building(building_id),
+	id SERIAL PRIMARY KEY,
+	building_id INT NOT NULL REFERENCES building(id),
 	name_or_number TEXT NOT NULL,
 	capacity INT NOT NULL CHECK (capacity > 0),
 	type TEXT NOT NULL CHECK (type IN ('meeting room', 'lecture room', 'studio', 'workshop room')),
@@ -31,17 +31,17 @@ CREATE TABLE room (
 );
 
 CREATE TABLE room_equipment (
-	room_id INT NOT NULL REFERENCES room(room_id),
-	equipment_id INT NOT NULL REFERENCES equipment_type(equipment_id),
+	room_id INT NOT NULL REFERENCES room(id),
+	equipment_id INT NOT NULL REFERENCES equipment_type(id),
 	quantity INT NOT NULL DEFAULT 1 CHECK (quantity > 0),
 	PRIMARY KEY (room_id, equipment_id)
 );
 
 CREATE TABLE booking_series (
-	series_id SERIAL PRIMARY KEY,
-	room_id INT NOT NULL REFERENCES room(room_id),
-	organization_id INT REFERENCES organization(organization_id),									-- Organization ID is nullable because a person should be able to book a room for themselves only
-	created_by INT NOT NULL REFERENCES person(person_id),
+	id SERIAL PRIMARY KEY,
+	room_id INT NOT NULL REFERENCES room(id),
+	organization_id INT REFERENCES organization(id),									-- Organization ID is nullable because a person should be able to book a room for themselves only
+	created_by INT NOT NULL REFERENCES person(id),
 	recurrence_rule TEXT NOT NULL,
 	day_of_week TEXT NOT NULL,
 	start_time TIME NOT NULL,
@@ -54,11 +54,11 @@ CREATE TABLE booking_series (
 );
 
 CREATE TABLE booking (
-	booking_id SERIAL PRIMARY KEY,
-	room_id INT NOT NULL REFERENCES room(room_id),
-	organization_id INT REFERENCES organization(organization_id),									-- Organization ID is nullable because a person should be able to book a room for themselves only
-	created_by INT NOT NULL REFERENCES person(person_id),
-	series_id INT REFERENCES booking_series(series_id),
+	id SERIAL PRIMARY KEY,
+	room_id INT NOT NULL REFERENCES room(id),
+	organization_id INT REFERENCES organization(id),									-- Organization ID is nullable because a person should be able to book a room for themselves only
+	created_by INT NOT NULL REFERENCES person(id),
+	series_id INT REFERENCES booking_series(id),
 	start_datetime TIMESTAMP NOT NULL,
 	end_datetime TIMESTAMP NOT NULL,
 	status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled', 'rejected')),
@@ -67,16 +67,19 @@ CREATE TABLE booking (
 	cancellation_reason TEXT,
 	requires_approval BOOLEAN NOT NULL DEFAULT FALSE,
 	approval_granted BOOLEAN,
-    CHECK (
-        (status = 'pending'   AND (requires_approval = TRUE AND approval_granted IS NULL)) OR		-- Requires approval AND whether it was granted is not known (pending)
 
-        (status = 'confirmed' AND (requires_approval = FALSE OR approval_granted = TRUE))  OR		-- Doesn't require approval (so status is automatically confirmed) 
-																									-- OR requires approval AND it was granted (so status is confirmed)
 
-        (status = 'rejected'  AND (requires_approval = TRUE AND approval_granted = FALSE)) OR       -- Requires approval AND wasn't granted (rejected)
+	CHECK (
+		(requires_approval = FALSE AND approval_granted IS NULL)                                          -- no approval needed: granted must always be null
+		OR
+		(requires_approval = TRUE  AND approval_granted IS NULL  AND status IN ('pending', 'cancelled'))  -- awaiting decision: could be cancelled before the decision
+		OR
+		(requires_approval = TRUE  AND approval_granted = TRUE   AND status IN ('confirmed', 'cancelled'))-- approved: can be confirmed or cancelled afterwards
+		OR
+		(requires_approval = TRUE  AND approval_granted = FALSE  AND status = 'rejected')                 -- rejected by approver
+	),
 
-        (status = 'cancelled')																		-- Cancelled, so no need to check the other flags
-    ),
-    CHECK (DATE(start_datetime) = DATE(end_datetime)),												-- The booking start time and end time must be in the same day (no overnight session)
-	CHECK (end_datetime > start_datetime)															-- And the booking end time must be after start time
+
+    CHECK (DATE(start_datetime) = DATE(end_datetime)),	-- The booking start time and end time must be in the same day (no overnight session)
+	CHECK (end_datetime > start_datetime)				-- And the booking end time must be after start time
 );
