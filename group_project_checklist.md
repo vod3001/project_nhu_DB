@@ -6,18 +6,18 @@ title: "Group Assignment: Submission Checklist"
 
 Group members (names and student numbers):
 
-- Vo Dinh Nhan - 
+- Vo Dinh Nhan - 103773920
 - Nguyen Vo Trong Nguyen - 103763778
 - Nguyen Viet Dung - 103778682
-- Tran Hoang Minh -
-- Nguyen Huy -
+- Tran Hoang Minh - 103561860
+- Nguyen Quang Huy - 103770428
 
 Tick each box before submitting. The boxes under **Required** must all be ticked. The box under **Optional** concerns evaluation consent and is not required.
 
 ## Required
 
 - [x] The full report is combined into one PDF file.
-- [ ] Student names and student numbers are included on the cover of the PDF.
+- [x] Student names and student numbers are included on the cover of the PDF.
 - [x] All required sections are included in the PDF (subject analysis, conceptual model, relational schema, design-quality review, rationale).
 - [x] The conceptual diagram is readable and uses crow's foot notation.
 - [x] The relational schema in the PDF matches `schema.sql`.
