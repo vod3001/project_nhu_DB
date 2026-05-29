@@ -98,7 +98,6 @@ SELECT
     bk.status
 FROM booking bk
 JOIN room r ON bk.room_id = r.id
--- Could use any other organization_id, start_datetime, end_datetime as long as the rows are seeded
 WHERE bk.organization_id = 1
   AND bk.start_datetime >= '2027-07-02 14:00:00'
   AND bk.end_datetime   <= '2027-07-09 18:00:00'
