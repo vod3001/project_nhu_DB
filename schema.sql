@@ -70,13 +70,13 @@ CREATE TABLE booking (
 
 
 	CHECK (
-		(requires_approval = FALSE AND approval_granted IS NULL  AND status IN ('confirmed', 'cancelled'))  -- no approval needed, so of course status is confirmed or cancelled
+		(requires_approval = FALSE AND approval_granted IS NULL  AND status IN ('pending', 'confirmed', 'cancelled'))  -- no approval needed, so of course status is not rejected
 		OR
-		(requires_approval = TRUE  AND approval_granted IS NULL  AND status IN ('pending', 'cancelled'))    -- awaiting decision: may be cancelled before decision is made
+		(requires_approval = TRUE  AND approval_granted IS NULL  AND status IN ('pending', 'cancelled'))    		   -- awaiting decision: may be cancelled before decision is made
 		OR
-		(requires_approval = TRUE  AND approval_granted = TRUE   AND status IN ('confirmed', 'cancelled'))  -- approved: could still be cancelled afterwards
+		(requires_approval = TRUE  AND approval_granted = TRUE   AND status IN ('confirmed', 'cancelled'))  		   -- approved: could still be cancelled afterwards
 		OR
-		(requires_approval = TRUE  AND approval_granted = FALSE  AND status = 'rejected')                   -- rejected: last status, could not be cancelled 
+		(requires_approval = TRUE  AND approval_granted = FALSE  AND status = 'rejected')                   		   -- rejected: last status, could not be cancelled 
 	),
 
 
